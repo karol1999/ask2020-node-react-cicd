@@ -8,6 +8,10 @@ jobs:
       name: node/default
     steps:
       - checkout
+      - setup_remote_docker
+      - run:
+         name: Build docker containers
+         command: docker-compose up -d
 
   test_1:
     executor:
@@ -38,8 +42,16 @@ jobs:
 workflows:
     build-and-test:
       jobs:
-        - build
+        - build:
+           filters:
+             branches:
+               only:
+                 - master
         - test_1:
+           filters:
+             branches:
+               only:
+                 - master
            requires:
              - build
         - test_2:
